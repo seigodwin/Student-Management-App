@@ -8,7 +8,7 @@ VALID_EMAIL_DOMAINS = ["com", "edu", "net"]
 VALID_GENDERS = ["m", "f", "male", "female"]
 
 def main():
-    student = get_student_object()
+    student = Student.get_student()
     run_app(student) 
 
 class Student: 
@@ -155,6 +155,52 @@ class Student:
                 writer.writeheader()   
             writer.writerow({"course_id": course_id, "course_name": course_name, "instructor": instructor})
 
+    @classmethod
+    def get_student() -> Student:
+        while True:
+            student_name = input("Enter your full name: ").strip()
+            if not cls.is_valid_name(student_name):
+                print("Name is invalid!")
+                continue
+            
+            student_email = input("Enter email: ").strip()
+            if not cls.is_valid_email(student_email):
+                print("E-mail is invalid!")
+                continue
+            
+            student_id = input("Enter your student ID: ").strip()
+            if not cls.is_valid_student_id(student_id):
+                print("ID is invalid")
+                continue
+            
+            student_age = input("Enter your age: ").strip()
+            if not student_age.isdigit():
+                print("Age must be a number")
+                continue
+            
+            student_gender = input("Enter your gender: ").strip()
+            if not cls.is_valid_gender(student_gender):
+                print("Gender is invalid!")
+                continue
+    
+            return Student(student_id, student_name, int(student_age), student_gender, student_email)
+
+    @staticmethod
+    def is_valid_name(name: str) -> bool:
+        return bool(re.fullmatch(r"^[a-zA-Z\s]+$", name))
+
+    @staticmethod
+    def is_valid_email(email: str) -> bool:
+        return bool(re.fullmatch(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|net)$", email, re.IGNORECASE))
+
+    @staticmethod
+    def is_valid_student_id(student_id: str) -> bool:
+        return bool(re.fullmatch(r"^[a-zA-Z0-9/\s]+$", student_id))
+  
+    @staticmethod
+    def is_valid_gender(gender: str) -> bool:
+        return gender.lower() in VALID_GENDERS
+        
 class Course:
     def __init__(self, course_id: str, course_name: str, instructor: str): 
         self.course_id = course_id 
@@ -164,46 +210,7 @@ class Course:
     def __repr__(self) -> str:
         return f"Course(id={self.course_id}, name={self.course_name}, instructor={self.instructor})"
 
-def get_student_object() -> Student:
-    while True:
-        student_name = input("Enter your full name: ").strip()
-        if not is_valid_name(student_name):
-            print("Name is invalid!")
-            continue
-        
-        student_email = input("Enter email: ").strip()
-        if not is_valid_email(student_email):
-            print("E-mail is invalid!")
-            continue
-        
-        student_id = input("Enter your student ID: ").strip()
-        if not is_valid_student_id(student_id):
-            print("ID is invalid")
-            continue
-        
-        student_age = input("Enter your age: ").strip()
-        if not student_age.isdigit():
-            print("Age must be a number")
-            continue
-        
-        student_gender = input("Enter your gender: ").strip()
-        if not is_valid_gender(student_gender):
-            print("Gender is invalid!")
-            continue
 
-        return Student(student_id, student_name, int(student_age), student_gender, student_email)
-
-def is_valid_name(name: str) -> bool:
-    return bool(re.fullmatch(r"^[a-zA-Z\s]+$", name))
-
-def is_valid_email(email: str) -> bool:
-    return bool(re.fullmatch(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|edu|net)$", email, re.IGNORECASE))
-
-def is_valid_student_id(student_id: str) -> bool:
-    return bool(re.fullmatch(r"^[a-zA-Z0-9/\s]+$", student_id))
-
-def is_valid_gender(gender: str) -> bool:
-    return gender.lower() in VALID_GENDERS
 
 def show_menu() -> int:
     print("-----Choose from the list below!-----")
